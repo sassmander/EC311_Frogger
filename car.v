@@ -19,7 +19,8 @@ module car(
             carB <= 9'd150;
         end else begin
             case (level)
-                3'd0: speed <= 10'd20;
+                3'd0: speed <= 10'd10;
+                3'd1: speed <= 10'd25;
                 default: speed <= 10'd40;
             endcase
           
