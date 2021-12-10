@@ -6,8 +6,9 @@ module top_frogger(
     output wire [3:0] VGA_R,    // 4-bit VGA red output
     output wire [3:0] VGA_G,    // 4-bit VGA green output
     output wire [3:0] VGA_B,     // 4-bit VGA blue output
-    output wire [6:0] sevenseg_o,
-    output wire [3:0] digit_o
+//    output wire [6:0] sevenseg_o,
+//    output wire [2:0] digit_o,
+    output [1:0] lives
     );
 
     wire rst = ~reset_in;    // reset is active low on Arty & Nexys Video
@@ -23,7 +24,7 @@ module top_frogger(
     vga640x480 display(.i_clk(clk_in), .i_pix_stb(pix_stb), .i_rst(rst), .o_hs(VGA_HS_O), .o_vs(VGA_VS_O), .o_x(X), .o_y(Y));
     
     //Game state control registers
-    wire[2:0] lives;
+//    wire[2:0] lives;
     wire[2:0] level;
     //localparam div_val = 28'd100000000;
     wire gamewin, gameover, pseudo;
@@ -42,20 +43,18 @@ module top_frogger(
     //Moving objects instantiation
     frog onlyfrog(.clk_in(clk_in), .reset_in(reset_in), .pseudo(pseudo), .buttonup(buttonup), .buttondown(buttondown), .buttonleft(buttonleft), .buttonright(buttonright), .frogL(frogL), .frogR(frogR), .frogT(frogT), .frogB(frogB));
     //Cars should have another input for changing clock state
-    car car1_1(.clk_in(clk_in), .reset_in(reset_in), .pseudo(pseudo), .carL(car1L), .carR(car1R), .carT(car1T), .carB(car1B));
-    car2 car1_2(.clk_in(clk_in), .reset_in(reset_in), .pseudo(pseudo),.carL(car2L), .carR(car2R), .carT(car2T), .carB(car2B));
-    car3 car1_3(.clk_in(clk_in), .reset_in(reset_in), .pseudo(pseudo),.carL(car3L), .carR(car3R), .carT(car3T), .carB(car3B));
-    car4 car1_4(.clk_in(clk_in), .reset_in(reset_in), .pseudo(pseudo),.carL(car4L), .carR(car4R), .carT(car4T), .carB(car4B));
+    car car1_1(.clk_in(clk_in), .reset_in(reset_in), .level(level), .pseudo(pseudo), .carL(car1L), .carR(car1R), .carT(car1T), .carB(car1B));
+    car2 car1_2(.clk_in(clk_in), .reset_in(reset_in), .level(level), .pseudo(pseudo),.carL(car2L), .carR(car2R), .carT(car2T), .carB(car2B));
+    car3 car1_3(.clk_in(clk_in), .reset_in(reset_in), .level(level), .pseudo(pseudo),.carL(car3L), .carR(car3R), .carT(car3T), .carB(car3B));
+    car4 car1_4(.clk_in(clk_in), .reset_in(reset_in), .level(level), .pseudo(pseudo),.carL(car4L), .carR(car4R), .carT(car4T), .carB(car4B));
     //Collision check for each car
     collision colli1(.clk_in(clk_in), .reset_in(reset_in), .pseudo(pseudo), .frogL(frogL), .frogR(frogR), .frogT(frogT), .frogB(frogB), .car1L(car1L), .car1R(car1R), .car1T(car1T), .car1B(car1B), .car2L(car2L), .car2R(car2R), .car2T(car2T), .car2B(car2B), .car3L(car3L), .car3R(car3R), .car3T(car3T), .car3B(car3B),  .car4L(car4L), .car4R(car4R), .car4T(car4T), .car4B(car4B), .collision_o(collision_w));
     
     //5 sec countdown and seven segment display with countdown and number of lives
-    counter_5sec startcount(.clk_in(clk_in), .reset_in(reset_in), .count_o(count_start));
+//    counter_5sec startcount(.clk_in(clk_in), .reset_in(reset_in), .count_o(count_start));
 
-    display_cont displaysevenseg(.clk_in(clk_in), .reset_in(reset_in), .startcount(count_start), .lives(lives), .digit_o(digit_o), .digit_seven_seg(sevensegout));
-    seven_seg_start seven_seg(.binary_in(sevensegout), .sevenseg_o(sevenseg_o));
-    assign disp_on = 1'b0;
-    assign disp_off = 1'b1;
+//    display_cont displaysevenseg(.clk_in(clk_in), .reset_in(reset_in), .startcount(count_start), .lives(lives), .digit_o(digit_o), .digit_seven_seg(sevensegout));
+//    seven_seg_start seven_seg(.binary_in(sevensegout), .sevenseg_o(sevenseg_o));
     
     //Set locations for lanes, locations, etc
     wire wholeArea = ((X >= 10'd20)&&(X <= 10'd620)&&(Y >= 9'd20)&&(Y <= 9'd460)); //Sets the entire area, cuts off 20 pixels from each border
